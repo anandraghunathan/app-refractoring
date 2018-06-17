@@ -1,0 +1,51 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+$set_environment_variables = <<SCRIPT
+tee "/etc/profile.d/vp-app-env_variables.sh" > "/dev/null" <<EOF
+# Maven environment variables
+export M2_HOME=/usr/local/apache-maven-3.5.3
+export M2=/usr/local/apache-maven-3.5.3/bin
+export PATH=$PATH:/usr/local/apache-maven-3.5.3
+EOF
+SCRIPT
+
+Vagrant.configure(2) do |config|
+
+	config.vm.box = "bento/centos-7.1"
+	config.vm.provision "shell" , path: "utils_install.sh", privileged:true
+  
+	# Debug - Executing the below two shell scripts the way it should be
+	config.vm.provision "shell" , path: "mongodb.sh", privileged:true
+	config.vm.provision "shell" , path: "maven.sh", privileged:true
+	config.vm.provision "shell" , path: "zookeper.sh", privileged:true
+  
+	# Set environment variables
+	config.vm.provision "shell", inline: $set_environment_variables, run: "always"
+  
+	# Debug - Commented out docker and gcloud sdk
+	#config.vm.provision "shell" , path: "docker_install.sh", privileged:true
+	#config.vm.provision "shell" , path: "gcloud_sdk_install.sh", privileged:true
+
+	# Debug - Commented out docker-compose yaml file cause its not configured correctly
+	#config.vm.provision :docker
+	#config.vm.provision :docker_compose, yml: "/vagrant/docker-compose.yml", rebuild: true, run: "always"
+  
+	# Set timeout
+	config.vm.boot_timeout = 900000
+	config.ssh.insert_key = false
+	#config.ssh.username = "root"
+	#config.ssh.password = "vagrant"
+  
+	config.vm.define "vp-app-local" do |client|
+	  #client.vm.network "public_network", ip: "192.168.0.200", bridge: "eth0"
+	  client.vm.hostname = "vp-app-local"
+	  client.vm.provider "virtualbox" do |vb|
+	   vb.memory = 4096
+	   vb.cpus = 2
+	   vb.gui = true
+	  end
+	end
+end
+
+
