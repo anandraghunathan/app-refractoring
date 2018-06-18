@@ -1,7 +1,10 @@
 #! /usr/bin/env bash
 
+# Install nano
 sudo yum install -y nano
 
+# Install GIT
 sudo yum install -y git
 
-sudo yum install -y java-1.8.0-openjdk-devel
+# Install wget
+sudo yum install wget -y
