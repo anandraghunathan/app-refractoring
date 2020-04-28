@@ -3,7 +3,7 @@
 
 # Environment Variables for the guest VM
 $set_environment_variables = <<SCRIPT
-tee "/etc/profile.d/vp-app-env_variables.sh" > "/dev/null" <<EOF
+tee "/etc/profile.d/app-env_variables.sh" > "/dev/null" <<EOF
 # Maven environment variables
 export M2_HOME=/usr/local/apache-maven-3.5.3
 export M2=/usr/local/apache-maven-3.5.3/bin
@@ -13,9 +13,9 @@ SCRIPT
 
 Vagrant.configure(2) do |config|
 	config.vm.box = "bento/centos-7.1"
-	config.vm.define "vp-app-local" do |client|
+	config.vm.define "app-local" do |client|
 	  #client.vm.network "public_network", ip: "192.168.0.200", bridge: "eth0"
-	  client.vm.hostname = "vp-app-local"
+	  client.vm.hostname = "app-local"
 	  client.vm.provider "virtualbox" do |vb|
 	   vb.memory = 4096
 	   vb.cpus = 2
@@ -32,7 +32,7 @@ Vagrant.configure(2) do |config|
   
 	# Set environment variables
 	config.vm.provision "shell", inline: $set_environment_variables, run: "always"
-	config.vm.provision "shell", inline: "source /etc/profile.d/vp-app-env_variables", run: "always"
+	config.vm.provision "shell", inline: "source /etc/profile.d/app-env_variables", run: "always"
   
 	# Set timeout and ssh insert keys
 	config.vm.boot_timeout = 500000
